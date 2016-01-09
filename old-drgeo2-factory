@@ -1,0 +1,22 @@
+#!/bin/sh
+# Author: Bert Freudenberg
+# Purpose: Run etoys using the old Sugar launch procedure which comes
+#          pre-installed on the first mass-produced machines (Trial-3/Ship.1)
+#          The new Sugar (Joyride/Update.1) uses bin/etoys-activity instead.
+#
+# This script is executed via old-etoys-activity from 
+# activity.info by DBus.
+# It launches sugar-native-factory which in turn will
+# execute old-etoys-instance which actually runs Etoys.
+
+export SUGAR_BUNDLE_PATH=`dirname $0`
+
+[ -z "$SUGAR_PROFILE" ] && SUGAR_PROFILE=default
+logdir="$HOME/.sugar/$SUGAR_PROFILE/logs"
+[ ! -d "$logdir" ] && mkdir -p "$logdir"
+log="$logdir/Etoys2.log"
+
+echo Started "$0" "$@" >> "$log"
+
+export PATH=$SUGAR_BUNDLE_PATH:$PATH
+exec sugar-native-factory "$@" >> "$log" 2>&1

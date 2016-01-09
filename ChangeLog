@@ -1,0 +1,228 @@
+Bugs tracker at http://bugs.drgeo.eu
+
+
+2012-04-13  Hilaire Fernandes  <hilaire@drgeo.eu>
+
+	New features
+	* Numerous improvements for a better experience with tablet and
+	interactive board.
+	* Sketches can be deleted from the preview dialog
+	* Removed windows decorations and borders grip in the Sugar theme
+	* Remanaged menus
+	* Improved canvas view for programmed sketches
+	* Various optimizations
+	* Handle connection error for remote sketches
+	* Sketches can be loaded and saved on a server (FTP only now)
+	* Dr. Geo settings to set the server account for remote sketch
+	* Animated loader for time consuming operation
+
+	Bugs fixes
+	* A few messages from the Pharo Smalltalk are also localized now
+	* Uninitialized segment mark caused a save error
+	* Fixes when creating middle point
+	* #13787 Macro construction player, order mater
+
+2011-11-26  Hilaire Fernandes  <hilaire@drgeo.eu>
+
+	New features
+	* #13612 Export to bitmap
+	* #13607 Mark symbol for segment
+	* #13589 Mutuate point feature
+	* #13583 Move figure with Mouse right button
+	* #13582 Zoom figure with mouse wheel
+	* #13551 Lock free item
+	* #11989 Neat way of labelling up a diagram
+	* More examples from Mounir Azouzi about lines in the triangle
+	* #13510 Add the intersection tool
+	* Build a circle by its center and a segment length.
+	* #13509 Implement property tool for free point, free value and
+	script (Included in the command system for undo/redo)
+
+	Bugs fixes
+	* #13620 Move up MySketches and Exemples dir
+	* #13466 Zero divide error with arc
+	* Faster loading time. Thanks to Xavi for his huge sketch example.
+	* When in Eraser mode, the hidden items are correctly drawn
+	* #13482 Undo when doing a construction
+	* Updated French and Spanish translations: multiple lines messages
+	were not correctly handled.
+
+2011-08-06  Hilaire Fernandes  <hilaire@ofset.org>
+
+	* Release 11.08 - Thanks to the Pharo Smalltlak community for its
+	continuous support - Special greating to Henrik.
+
+	* #2929 Simplify the way to load a sketch: now the user selects
+	the sketch to open from a preview list
+
+	* User can open sketch from an examples repository or from its own
+	'MySketches' repository. Change accordingly the load and save file
+	operation.
+	
+	* In the toolbar, new icon button to create a blank sketch, keep
+	or open an existing sketch
+
+	* DrGeo is now touchpad friendly for a better user experience on
+	tablet PC
+
+	* #13010 Secure the edited free value
+
+	* #12785 undo/redo angle: lost arc
+
+	* #12782 Use smaller font to print 3 points angle
+
+	* #12786 label sould be selectable first
+
+	* #12784 Assist to name object
+
+	* Rendering speed improvements 
+
+	* Properly save sketch as UTF-8 file
+
+
+2011-05-22  Hilaire Fernandes  <hilaire@ofset.org>
+
+	* #12654 buggy item after undo
+
+	* #10960 Largely improved locus sampler: faster and more
+	accurate. Not yet perfect when tiny sampling step is
+	needed. Nevertheless good comprimise with speed.  
+
+	* #12304 Working start script for Linux 64bits architecture
+	
+	* #10959 "multiple creation" mode need to apply to eraser as well
+	
+	* #12419 Number uncorrectly rounded. Now the behavior is: 1) float
+	are printed rounded to 2 decimals 2)Fraction are still presented
+	as Fraction
+	
+	* #12091 Locus label postion does not udpate
+
+	* Associate an icon to the drgeo.sh start script for linux.
+	
+	* In the DrGeo world menu, a menu entry to open an arbitrary
+	file (text, picture, script)
+	
+	* #10954 Need of information bar in the bottom of DrGeo
+	
+	* #10899 Toggle Construct and Move mode
+	
+	* Implement unicity on Polygon defined by n points
+	
+	* Smalltalk written sketch, when possible the user can enter
+	direct point coordinates, value or vector coordinates, DrGeo will
+	turn these as math item in the canvas, for example you can define
+	a segment with canvas segment: 0@0 to: 1@1 or canvas
+	segment: (canvas point: 0@0 to: (canvas point: 1@1). In the first
+	case the point are instantiated but hidden. See the updated
+	documentation for more examples.
+
+	New features documented in the user guide:
+
+	* DrGWrappedPoint>>coordinates
+
+	* DrGeoCanvas>>segment:to accept point as well (Wrapped point are
+	created on the fly), it covers all curves instantiation, and place
+	where vectors and values arguments are used.
+
+	* DrGeoCanvas>>update to update the canvas after a set of items
+	was modified
+	
+	* DrGWrappedItem>>moveTo: move the item to a given point position
+	whenever it is meaningful
+	
+	
+2011-02-17  Hilaire Fernandes  <hilaire@ofset.org>
+
+	* Release 11.03
+
+	* #12009: Polygon closestPointTo: mismatch
+	* #11633: Implement closestPointTo: for Point mathItem
+	* Updated Spanish translation
+	* #11877: In Smalltalk programmed figure, define a point position
+	with a block closure.
+	* #11634: wrong sent message in DrGWrappedCurve
+	* #11879: Error with slopeOf: message, wrong assignment
+	* #11635: Missing method in DrGeoCanvas
+	* #11631: Add dev tool in the DrGeo world menu
+	* Transformation class name incorrectly constructed prevented the
+	use of any transformation in programmed figure
+
+2010-11-13  Hilaire Fernandes  <hilaire@ofset.org>
+
+	* Release 10.12
+
+	* #10951: "undo" should restore the object's name. Create a point,
+	rename it, erase it, and undo. The point is restored but its name
+	is no longer displayed. DrGeo seems to remember the name but it
+	forgets to redisplay it. It is now fixed.
+	* #11146: Invisible items in the style menu. With the Sugar Theme,
+	some items of the style menu are invisible: line size and line
+	style are by default black with a black background. Solution:
+	force to a white background in the menu.
+	* #11285: Remove duplicated methods basicType and
+	nodeName. basicType and nodeName methods from the MathItem class
+	should be merged. It is a duplication for historical reason
+	related to the xml save format. These attributes are identical
+	except for: arc - arcCircle; ray - halfLine; value -
+	numeric. nodeName should be removed. It makes some code (macro
+	loading from a xml description) unnecessary complicated.
+	* #10882: Extent file format. Extent the current file format to
+	support: DrGeo Smalltalk scripting; DrGeo macro and extended
+	style. Now Macro and script can be saved/load; moreover the XML
+	format is extended to support label and vector positioning and
+	extended style.
+	* #10957: Creating a circle from segment and point. When creating
+	a circle by selecting a segment first, there is a an error. I
+	decided to remove this mechanism to create circle. I have hiatus
+	because when creating circle, I am using the FlyPointXXXBuilder to
+	create on the fly point and to get a live moving circle (we do not
+	have this feature in DrGeo 1.1).
+	* #10941: The macro and script dialogs now stay on the foreground.
+	* #10952: Wrong message in script dialog.
+	* #10881: Preview in the file widget. With the file dialog, we
+	should have a preview of the user selected DrGeo file.
+	* #10880: Icon to quit DrGeo. Currently, to quit the application,
+	the user must access to the world Pharo menu then select quit
+	without saving. We should have on a the task bar a button to quit
+	directly DrGeo. I implemented a DrGreo world menu with the even
+	more options: new figure; open a DrGeo file; quit the DrGeo
+	environment. It can be extended in the future with more menu
+	entries.
+	* #11366: Creating a math item already existing but hidden. When
+	the user defines an item already existing but hidden, DrGeo
+	factory prevents a duplicated definition, so the user will fell
+	DrGeo refuses to create the wished item. However the user does not
+	have a chance to realize his item is not created because it is
+	already defined but hidden. In this case, DrGeo should just
+	unhidden the existing item, so the user got the expected feedback.
+
+2008-09-20  Hilaire Fernandes  <hilaire@ofset.org>
+
+	* New bundle based on source code version 148.
+
+2008-02-01  Hilaire Fernandes  <hilaire@ofset.org>
+
+	* activity/activity.info (activity_version): update to version
+	114, missing string to translate.
+
+2008-02-01  Hilaire Fernandes  <hilaire [AT] ofset.org>
+
+	* Add a table morph with buttons to open the .fgeo files in the
+	examples folder.
+
+2008-01-31  Hilaire Fernandes  <hilaire [AT] ofset.org>
+
+	* DrGeoII.pr: Source must come with proper TextDomain
+	intialization (TextDomainManager registerCategoryPrefix: 'DrGeoII'
+	domain: 'DrGeoII'
+
+	* DrGeoII.sh: the file should be executable. Fix error on argument.
+
+2008-01-30  Hilaire Fernandes  <hilaire [AT] ofset.org>
+
+	* Include messages catalog.
+
+	* Add LICENSE and ChangeLog.
+	
+

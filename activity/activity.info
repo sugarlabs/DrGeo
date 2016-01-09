@@ -1,0 +1,10 @@
+[Activity]
+name = DrGeo
+activity_version = 1204
+host_version = 1
+bundle_id = eu.drgeo.drgeo
+icon = DrGeoII-icon
+exec = DrGeoII.sh
+show_launcher = yes
+mime_types = application/fgeo
+
