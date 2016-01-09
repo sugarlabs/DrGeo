@@ -1,0 +1,8 @@
+squeak
+	command=squeak
+	name=Squeak
+	can_open_multiple_files=false
+	startup_notify=true
+	expects_uris=false
+	requires_terminal=false
+	mime_types=application/x-image,application/squeak-image,application/squeak-project,application/squeak-changeset

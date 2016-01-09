@@ -1,3 +1,0 @@
-#!/bin/sh
-# squeakvm-pharo-2151-src
-../unix/cmake/configure --prefix=../target --without-gl --without-uuid --without-Mpeg3Plugin --without-QuicktimePlugin --without-CroquetPlugin --without-GeniePlugin --CFLAGS="-O2 -s"
