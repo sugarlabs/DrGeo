@@ -1,0 +1,246 @@
+#! /bin/bash
+
+# File:        squeak
+# Author:      José L. Redrejo Rodríguez <jredrejo@edu.juntaextremadura.net>
+#
+# Carga la imagen de squeak que se le pasa como comando y si no
+#se le pasa ninguna llama a squeak con la imagen preparada para LinEx
+#
+# Copyright (C) 2003 J.L.Redrejo.
+#
+# This file is free software; you can redistribute it and/or modify it
+# under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful, but
+# WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+# General Public License for more details.
+#
+#
+#This script is for non-expert users to start Squeak easily.
+#If the available arguments to start the squeak virtual machine have
+#to be used, you should avoid using this script, and call the real
+#virtual machine using squeakvm
+#
+#See squeakvm(1) for the virtual machine available arguments
+
+set -e
+
+pluginimage()
+#first parameter: image file,
+#second parameter: target directory
+{
+	#If the plugin exists
+	if [ -f $IMAGE_DIR/${1} ]; then
+		#If it's not in the target directory, copy it
+		if [ ! -f ${2}/${1} ]; then
+			cp $IMAGE_DIR/${1} ${2}/${1}
+		#if it's in the target directory, but it's older, copy it:
+		elif [  "$IMAGE_DIR/${1}" -nt "${2}/${1}" ]; then
+			cp $IMAGE_DIR/${1} ${2}/${1}
+		fi
+		#If it isn't in $HOME, do the right symbolic link:
+		if [ ! -e ${HOME}/.npsqueak/${1} ]; then
+			ln -sf ${2}/${1} ${HOME}/.npsqueak/${1}
+		fi
+	fi
+}
+
+ensurefile()
+{
+	if [ ! -e "${2}" ]; then
+		if [ -f ${1}.bz2 ]; then
+			source=${1}.bz2
+			decompress=bunzip2
+		elif [ -f ${1}.gz ]; then
+			source=${1}.gz
+			decompress=gunzip
+		elif [ -f ${1} ]; then
+			source=${1}
+			decompress="cat"
+		else
+			source=""
+		fi
+	fi
+
+	if [ "$source" = "" ]; then
+		# quietly do nothing if the source is not there;
+		# this is used to support bare images that don't
+		# have a changes file
+		:
+	else
+		$decompress < $source > $2
+	fi
+}
+
+export OLDPWD=`pwd`
+
+#internationalization stuff:
+which gettext.sh &> /dev/null
+if [ "$?" = "0"  ]; then
+	. gettext.sh
+	echo "found gettext in path"
+else
+	for n in "/usr" "/bin" "/usr/bin"; do
+		if [ -e "${n}/gettext.sh" ]; then
+			. ${n}/gettext.sh
+			echo "found gettext in $n"
+			break
+		fi
+	done
+fi
+type eval_gettext &> /dev/null
+if [ "$?" != "0"  ]; then
+	echo "FATAL! You don't have gettext.sh on your system."
+	exit 1
+fi
+
+export TEXTDOMAINDIR=/usr/share/locale
+export TEXTDOMAIN=squeak
+
+message1=`eval_gettext "There are several Squeak images"`
+message2=`eval_gettext "Choose one:"`
+
+if [ ! -n "$SQUEAK_IMAGE_DIR" ]; then
+	IMAGE_DIR="/usr/share/squeak"
+else
+	IMAGE_DIR="$SQUEAK_IMAGE_DIR"
+fi
+
+VM_VERSION=`find /usr/lib/squeak/ -name "squeakvm" -type f|cut -f5 -d"/"`
+SQ_DIR=/usr/lib/squeak/$VM_VERSION
+
+if [ ! -n "$SQUEAK" ]; then
+	VM="$SQ_DIR/squeakvm -mmap 1024M -nomixer "
+else
+	VM="$SQUEAK"
+fi
+
+#let's check if first parameter is project:
+derecha=`echo ${1: -3}`
+
+if [  -z "$1" ] || [ "$derecha" = ".pr" ]; then
+	mkdir -p "${HOME}/.squeak/My Squeak"
+	ln -sf $IMAGE_DIR/*.sources ${HOME}/.squeak/
+
+	#create needed links to have squeak at $HOME:
+	if [ ! -e ${HOME}/squeak ]; then
+		ln -sf ${HOME}/.squeak ${HOME}/squeak
+	fi
+
+	#show all the images if there are more than one:
+	lista=`(cd ${HOME}/squeak; ls;cd ${IMAGE_DIR};ls) | grep '\.image*' | sed -e 's/\.image*//' | sed -e 's/\.gz$//' |sed -e 's/\.bz2$//' |sort | uniq`
+	cuenta=`(cd ${HOME}/squeak; ls;cd ${IMAGE_DIR};ls) | grep '\.image*' | sed -e 's/\.image*//' | sed -e 's/\.gz$//' |sed -e 's/\.bz2$//' |sort | uniq |wc -l`
+
+	if [ $cuenta == 1 ]; then
+		cuentalocal=`(cd ${HOME}/squeak; ls) | grep '\.image*' | sed -e 's/\.image*//' | sed -e 's/\.gz$//' |sed -e 's/\.bz2$//' |sort | uniq |wc -l`
+		if [ $cuentalocal == 1 ]; then
+			Archivo=`cd ${HOME}/squeak/;ls *.image|sed -e 's/\.image*//' `
+		else
+			Archivo=`cd /usr/share/squeak/;ls *.image|sed -e 's/\.image*//'`
+		fi
+		export SQUEAK_IMAGE=${HOME}/squeak/$Archivo.image
+	else
+		#let's find a dialog application to use:
+		if [  -z ${DISPLAY} ]; then
+			dialogo="whiptail"
+		elif [ ! -z $KDE_FULL_SESSION ]; then
+			dialogo="kdialog"
+		else
+			dialogo=`which zenity||true`
+			if [ -z "$dialogo" ]; then
+				dialogo=`which kdialog||true`
+				if [ -z "$dialogo" ]; then
+					dialogo="whiptail"
+				else
+					dialogo="kdialog"
+				fi
+			else
+				dialogo="zenity"
+			fi
+		fi
+
+		#now let's launch the dialog:
+		if [ "$dialogo" = "zenity" ]; then
+			Archivo=`zenity --width=350 --height 250 --window-icon="/usr/share/pixmaps/squeak.png" --title "$message1" --list --column "$message2" $lista`
+		else
+			I=1
+			field=`echo ${lista}|cut -f1 -d" "`
+			while [ ! -z ${field} ]; do
+				lista1=$lista1" "$field" "$field
+				I=$(($I+1))
+				field=`echo ${lista}|cut -f${I} -d" "`
+			done
+			file=`tempfile`
+			#
+			if [ "$dialogo" = "kdialog" ]; then
+				kdialog --title  "${message1}" --menu "${message2}" ${lista1} --icon /usr/share/pixmaps/squeak.png >${file}
+			elif [  -z ${DISPLAY} ]; then
+				whiptail --title  "${message1}" --menu "${message2}" 20 80 10 ${lista1} --noitem 2>${file}
+			else
+				x-terminal-emulator -e "whiptail --title  '${message1}' --menu '${message2}' 20 80 10 ${lista1} --noitem 2>${file}"
+			fi
+			Archivo=`cat ${file}`
+		fi
+
+		export SQUEAK_IMAGE="${HOME}/squeak/$Archivo.image"
+	fi #end of choosing the image to launch
+
+	if [ ! -n "$Archivo" ]; then
+		export SQUEAK_IMAGE=""
+		exit
+	fi
+
+	if [ ! -f $SQUEAK_IMAGE ]; then
+		ensurefile "$IMAGE_DIR/${Archivo}.image"  "${SQUEAK_IMAGE}"
+		if [ -f $IMAGE_DIR/${Archivo}.changes* ]; then
+			ensurefile "$IMAGE_DIR/${Archivo}.changes"  "${HOME}/squeak/$Archivo.changes"
+		fi
+	fi
+else
+	export SQUEAK_IMAGE=$1
+fi
+
+cd -
+############## plugin configuration: #####################
+mkdir -p ${HOME}/.npsqueak/secure
+chmod 700 ${HOME}/.npsqueak/secure
+mkdir -p ${HOME}/.npsqueak/untrusted
+pluginimage "SqueakPlugin.image" "${HOME}/.npsqueak"
+pluginimage "EducarexPlugin.image" "${HOME}/.npsqueak"
+if [ ! -e ${HOME}/.npsqueak/SqueakPlugin.image ] && [ -e ${HOME}/.npsqueak/EducarexPlugin.image ] ; then
+	ln -sf ${HOME}/.npsqueak/EducarexPlugin.image ${HOME}/.npsqueak/SqueakPlugin.image
+fi
+###########################################################
+
+#If Caps_Lock is active, we reset it
+#xresetcapslock
+
+if [ -z "$LC_ALL" ]; then
+	export LC_ALL=`echo $LANG`
+fi
+
+#Si the user did not cancel, it starts:
+
+if [ ! -z "$SQUEAK_IMAGE" ]; then
+	if [ -z $2 ]; then
+		#let's check if first parameter is project:
+		derecha=`echo ${1: -3}`
+		#let's see if it has the whole path, begining by /:
+		principio=`echo $1|cut -c1`
+
+		if [ "$derecha" == ".pr" ]; then
+			if [ "$principio" == "/" ]; then
+				$VM "$SQUEAK_IMAGE" "$1"
+			else
+				$VM "$SQUEAK_IMAGE" "$PWD/$1"
+			fi
+		else
+			$VM
+		fi
+	else
+		$VM "$1" "$2"
+	fi
+fi

@@ -48,10 +48,31 @@ umask 0002
 export DBUS_FATAL_WARNINGS=0
 
 # now run Squeak VM with Etoys image
-exec vm/bin/squeak \
-    -encoding UTF-8 -vm-display-x11 -xshm \
-    -sugarBundleId $bundle_id \
-    -sugarActivityId $activity_id \
-    drgeo/drgeo.image \
-    "" \
-    $args
+# Thanks Daksh Shah!
+if [ "`uname -a | grep x86_64`" ]; then
+    export LD_LIBRARY_PATH=`pwd`/vm_64/lib:$LD_LIBRARY_PATH
+    exec vm_64/lib/squeak/4.10.2-2614/squeakvm \
+        -encoding UTF-8 -vm-display-x11 \
+        -sugarBundleId $bundle_id \
+        -sugarActivityId $activity_id \
+        drgeo/drgeo.image \
+        "" \
+        $args
+elif [ "`uname -a | grep armv7l`" ]; then
+    export LD_LIBRARY_PATH=`pwd`/vm_arm/lib:$LD_LIBRARY_PATH
+    exec vm_arm/lib/squeak/4.10.2-2614/squeakvm \
+        -encoding UTF-8 -vm-display-x11 \
+        -sugarBundleId $bundle_id \
+        -sugarActivityId $activity_id \
+        drgeo/drgeo.image \
+        "" \
+        $args
+else
+    exec vm_32/bin/squeak \
+        -encoding UTF-8 -vm-display-x11 -xshm \
+        -sugarBundleId $bundle_id \
+        -sugarActivityId $activity_id \
+        drgeo/drgeo.image \
+        "" \
+        $args
+fi

@@ -1,0 +1,43 @@
+application/squeak-image
+	default_application_id=squeak
+	description=Squeak image
+	[es]description=Imagen de Squeak
+	default_action_type=application
+	short_list_application_user_removals=
+	short_list_application_user_additions=squeak
+	icon_filename=/usr/share/icons/gnome/48x48/mimetypes/gnome-mime-application-squeak-image.png
+	category=Multimedia/Squeak
+	use_category_default=no
+
+application/squeak-changeset
+	default_application_id=gedit
+	description=Squeak executable changes
+	[es]description=Cambios ejecutables para Squeak
+	icon_filename=/usr/share/icons/gnome/48x48/mimetypes/gnome-mime-application-squeak-changeset.png
+	default_action_type=application
+	short_list_application_user_removals=
+	short_list_application_user_additions=gedit
+	category=Multimedia/Squeak
+
+application/squeak-changes
+	description=Squeak Changes
+	[es]description=Archivo de cambios de Squeak
+	category=Multimedia/Squeak
+	icon_filename=/usr/share/icons/gnome/48x48/mimetypes/gnome-mime-application-squeak-changes.png
+
+application/squeak-sources
+	description=Squeak source code
+	[es]description=Códigos fuente de Squeak
+	category=Multimedia/Squeak
+	icon_filename=/usr/share/icons/gnome/48x48/mimetypes/gnome-mime-application-squeak-sources.png
+
+application/squeak-project
+	default_application_id=squeak
+	description=Squeak project
+	[es]description=Proyecto de Squeak
+	category=Multimedia/Squeak
+	icon_filename=/usr/share/icons/gnome/48x48/mimetypes/gnome-mime-application-squeak-project.png
+	default_action_type=application
+	short_list_application_user_removals=
+	short_list_application_user_additions=squeak
+	use_category_default=no

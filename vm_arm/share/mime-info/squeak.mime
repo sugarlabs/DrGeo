@@ -1,0 +1,17 @@
+application/x-image
+	ext: image
+
+application/squeak-image
+	ext: image
+
+application/squeak-changeset
+	ext: cs
+
+application/squeak-sources
+	ext: sources
+
+application/squeak-changes
+	ext: changes
+
+application/squeak-project
+	ext: pr
