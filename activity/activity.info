@@ -1,10 +1,13 @@
 [Activity]
 name = DrGeo
 activity_version = 1204
-host_version = 1
+license = GPLv2+;MIT
 bundle_id = eu.drgeo.drgeo
 icon = DrGeoII-icon
 exec = DrGeoII.sh
 show_launcher = yes
 mime_types = application/fgeo
-
+summary = Dr. Geo allows one to create a geometric sketch and to manipulate it according to its constraints 
+tags = Game;Maths;Programming
+repository = https://github.com/sugarlabs/DrGeo
+url = https://help.sugarlabs.org/en/drgeo.html
